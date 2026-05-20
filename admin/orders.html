@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn Hàng - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#6F2A2A', accent: '#c49a45', bgtheme: '#F3EFE9', } } } }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f3ee;
+        }
+    </style>
+</head>
+
+<body class="bg-bgtheme flex h-screen overflow-hidden text-sm">
+    <aside class="w-72 bg-primary text-gray-200 flex flex-col flex-shrink-0">
+        <div class="p-8 pb-10">
+            <h1 class="text-2xl font-bold leading-1 tracking-wider uppercase">
+                Cửa hàng<br>Tuyết Nhàn
+            </h1>
+        </div>
+        <nav class="flex-1">
+            <a href="dashboard.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="layout-dashboard" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Trang quản trị</span>
+            </a>
+            <a href="orders.html" class="flex items-center px-2 py-4 transition-colors bg-bgtheme text-primary">
+                <i data-lucide="shopping-bag" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý đơn hàng</span>
+            </a>
+            <a href="products.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="package" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý sản phẩm</span>
+            </a>
+            <a href="categories.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="layers" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý danh mục</span>
+            </a>
+            <a href="rituals.html" class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="book-open" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý nghi lễ</span>
+            </a>
+            <a href="users.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="users" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý tài khoản</span>
+            </a>
+            <a href="analytics.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="bar-chart-3" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Thống kê</span>
+            </a>
+            <a href="system-config.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="settings" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Cài đặt</span>
+            </a>
+        </nav>
+        <div class="p-6">
+            <button onclick="Auth.logout()"
+                class="flex items-center w-full px-6 py-4 transition-colors hover:text-gray-500 text-white">
+                <i data-lucide="log-out" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Đăng xuất</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Quản Lý Đơn Hàng</h1>
+        </div>
+
+        <div class="bg-white p-4 rounded-t-lg shadow border-b flex flex-wrap gap-4">
+            <input type="text" id="search" placeholder="Mã đơn hàng, Tên khách hàng..."
+                class="border rounded px-3 py-2 flex-1 min-w-[200px] outline-none focus:border-primary">
+            <select id="status" class="border rounded px-3 py-2 w-48 outline-none focus:border-primary">
+                <option value="">Tất cả trạng thái</option>
+                <option value="pending">Chờ xử lý</option>
+                <option value="confirmed">Xác nhận</option>
+                <option value="shipping">Đang giao</option>
+                <option value="delivered">Hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+            </select>
+            <input type="month" id="filter_month" class="border rounded px-3 py-2 outline-none focus:border-primary">
+            <button onclick="loadItems(1)"
+                class="bg-gray-800 text-white px-6 py-2 rounded hover:bg-gray-700 shadow">Lọc</button>
+        </div>
+
+        <div class="bg-white rounded-b-lg shadow overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="p-4">Mã đơn hàng</th>
+                        <th class="p-4">Khách hàng</th>
+                        <th class="p-4 text-right">Tổng tiền</th>
+                        <th class="p-4">Thanh toán</th>
+                        <th class="p-4 text-center">Trạng thái</th>
+                        <th class="p-4 text-center">Ngày đặt</th>
+                        <th class="p-4 text-right">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y text-gray-700"></tbody>
+            </table>
+            <div id="pagination" class="p-4 flex justify-center space-x-2 border-t"></div>
+        </div>
+    </main>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        let currentPage = 1;
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            Auth.requireLogin();
+            const user = await Auth.getUser();
+            if (!user || user.role !== 'admin') return window.location.href = '../index.html';
+            loadItems();
+        });
+
+        async function loadItems(page = 1) {
+            currentPage = page;
+            const params = new URLSearchParams({ page });
+            if (document.getElementById('search').value) params.append('search', document.getElementById('search').value);
+            if (document.getElementById('status').value) params.append('status', document.getElementById('status').value);
+
+            const monthVal = document.getElementById('filter_month').value;
+            if (monthVal) {
+                // monthVal is YYYY-MM
+                params.append('date_from', `${monthVal}-01`);
+                // Calculate last day of month
+                const [year, month] = monthVal.split('-').map(Number);
+                const lastDay = new Date(year, month, 0).getDate();
+                params.append('date_to', `${monthVal}-${lastDay}`);
+            }
+
+            try {
+                const res = await ApiClient.get(`/admin/orders?${params.toString()}`);
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = res.data.map(order => {
+                    const paymentLabel = order.payment_method === 'cod' ? 'COD' : 'VietQR';
+                    const paymentStatus = order.payment ? (order.payment.status === 'paid' ? '<span class="text-green-600">(Đã TT)</span>' : '<span class="text-yellow-600">(Chưa TT)</span>') : '';
+
+                    const statuses = {
+                        'pending': { label: 'Chờ xử lý', class: 'bg-yellow-100 text-yellow-800' },
+                        'confirmed': { label: 'Xác nhận', class: 'bg-blue-100 text-blue-800' },
+                        'shipping': { label: 'Đang giao', class: 'bg-purple-100 text-purple-800' },
+                        'delivered': { label: 'Hoàn thành', class: 'bg-green-100 text-green-800' },
+                        'cancelled': { label: 'Hủy đơn', class: 'bg-red-100 text-red-800' }
+                    };
+                    const s = statuses[order.status] || { label: order.status, class: 'bg-gray-100' };
+
+                    return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-bold text-gray-900">${order.order_code}</td>
+                        <td class="p-4">
+                            <div class="font-medium">${order.fullname}</div>
+                            <div class="text-xs text-gray-500">${order.phone}</div>
+                        </td>
+                        <td class="p-4 text-right font-bold text-primary">${Number(order.total_amount).toLocaleString('vi-VN')} đ</td>
+                        <td class="p-4 text-sm">${paymentLabel} ${paymentStatus}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded-full text-[11px] font-bold ${s.class}">
+                                ${s.label}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center text-xs text-gray-500">${new Date(order.created_at).toLocaleString('vi-VN')}</td>
+                        <td class="p-4 text-right">
+                            <a href="order-detail.html?id=${order.id}" class="text-blue-600 hover:underline font-medium">Chi tiết</a>
+                        </td>
+                    </tr>
+                `}).join('');
+                renderPagination(res.meta);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderPagination(meta) {
+            const el = document.getElementById('pagination');
+            el.innerHTML = '';
+            if (!meta || meta.last_page <= 1) return;
+            for (let i = 1; i <= meta.last_page; i++) {
+                el.innerHTML += `<button onclick="loadItems(${i})" class="px-3 py-1 border rounded ${i === currentPage ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}">${i}</button>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

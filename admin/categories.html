@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Mục - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#6F2A2A', accent: '#c49a45', bgtheme: '#F3EFE9', } } } }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f3ee;
+        }
+    </style>
+</head>
+
+<body class="bg-bgtheme flex h-screen overflow-hidden text-sm">
+    <aside class="w-72 bg-primary text-gray-200 flex flex-col flex-shrink-0">
+        <div class="p-8 pb-10">
+            <h1 class="text-2xl font-bold leading-1 tracking-wider uppercase">
+                Cửa hàng<br>Tuyết Nhàn
+            </h1>
+        </div>
+        <nav class="flex-1">
+            <a href="dashboard.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="layout-dashboard" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Trang quản trị</span>
+            </a>
+            <a href="orders.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="shopping-bag" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý đơn hàng</span>
+            </a>
+            <a href="products.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="package" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý sản phẩm</span>
+            </a>
+            <a href="categories.html" class="flex items-center px-2 py-4 transition-colors bg-bgtheme text-primary">
+                <i data-lucide="layers" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý danh mục</span>
+            </a>
+            <a href="rituals.html" class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="book-open" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý nghi lễ</span>
+            </a>
+            <a href="users.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="users" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Quản lý tài khoản</span>
+            </a>
+            <a href="analytics.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="bar-chart-3" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Thống kê</span>
+            </a>
+            <a href="system-config.html"
+                class="flex items-center px-6 py-4 transition-colors hover:bg-bgtheme hover:text-primary">
+                <i data-lucide="settings" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Cài đặt</span>
+            </a>
+        </nav>
+        <div class="p-6">
+            <button onclick="Auth.logout()"
+                class="flex items-center w-full px-6 py-4 transition-colors hover:text-gray-500 text-white">
+                <i data-lucide="log-out" class="w-6 h-6 mr-4"></i>
+                <span class="font-medium uppercase">Đăng xuất</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Danh Mục</h1>
+            <a href="category-form.html" class="bg-primary text-white px-4 py-2 rounded shadow hover:opacity-90">Thêm
+                Danh Mục</a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="p-4">Hình ảnh</th>
+                        <th class="p-4">Tên danh mục</th>
+                        <th class="p-4 text-center">Số sản phẩm</th>
+                        <th class="p-4">Trạng thái</th>
+                        <th class="p-4 text-right">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y text-gray-700"></tbody>
+            </table>
+            <div id="pagination" class="p-4 flex justify-center space-x-2 border-t"></div>
+        </div>
+    </main>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        let currentPage = 1;
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            Auth.requireLogin();
+            const user = await Auth.getUser();
+            if (!user || user.role !== 'admin') return window.location.href = '../index.html';
+            loadItems();
+        });
+
+        async function loadItems(page = 1) {
+            currentPage = page;
+            try {
+                const res = await ApiClient.get(`/admin/categories?page=${page}`);
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = res.data.map(item => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4"><img src="${item.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 object-cover rounded border"></td>
+                        <td class="p-4 font-bold text-gray-900">${item.name}</td>
+                        <td class="p-4 text-center font-medium">${item.products_count || 0}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs ${item.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${item.is_active ? 'Hoạt động' : 'Đã ẩn'}
+                            </span>
+                        </td>
+                        <td class="p-4 space-x-3 text-right">
+                            <a href="category-form.html?id=${item.id}" class="text-blue-600 hover:underline">Sửa</a>
+                            <button onclick="deleteItem(${item.id})" class="text-red-600 hover:underline">Xóa</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                renderPagination(res.meta);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderPagination(meta) {
+            const el = document.getElementById('pagination');
+            el.innerHTML = '';
+            if (!meta || meta.last_page <= 1) return;
+            for (let i = 1; i <= meta.last_page; i++) {
+                el.innerHTML += `<button onclick="loadItems(${i})" class="px-3 py-1 border rounded ${i === currentPage ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}">${i}</button>`;
+            }
+        }
+
+        async function deleteItem(id) {
+            const isConfirmed = await showConfirm('Xác nhận xóa', 'Bạn có chắc chắn muốn xóa danh mục này?');
+            if (!isConfirmed) return;
+            try {
+                await ApiClient.delete(`/admin/categories/${id}`);
+                loadItems(currentPage);
+            } catch (err) { showNotification(err.message, 'error'); }
+        }
+    </script>
+</body>
+
+</html>

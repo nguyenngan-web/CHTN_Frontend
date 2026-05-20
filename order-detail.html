@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng - Tuyết Nhàn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    screens: {
+                        sm: '600px',
+                        md: '728px',
+                        lg: '984px',
+                        xl: '1240px',
+                        '2xl': '1240px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#6F2A2A',
+                        accent: '#fdf8f0',
+                        bgtheme: '#FFF3D9',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f3ee;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-bgtheme">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <a href="index.html" class="flex flex-col items-center group">
+                <img src="img/logoTN.png" class="w-20 h-20 md:w-28 md:h-28 object-contain">
+            </a>
+            <div class="flex-1 max-w-xl mx-8">
+                <div class="relative w-full">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm"
+                        class="w-full border border-gray-200 rounded-lg py-2.5 px-5 pr-12 focus:outline-none focus:border-accent bg-white shadow-sm">
+                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary" onclick="performGlobalSearch()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flex space-x-6 items-center py-4">
+                <div id="auth-menu" class="flex items-center text-sm font-medium text-gray-700"></div>
+                <a href="cart.html"
+                    class="flex items-center text-sm font-medium text-gray-700 hover:text-accent transition group relative">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    Giỏ hàng
+                    <span id="cart-count"
+                        class="absolute -top-2 -right-3 bg-primary text-white text-xs rounded-full px-1.5 py-0.5 shadow-sm">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-primary text-white shadow-md relative z-20">
+        <div class="container mx-auto px-4">
+            <ul
+                class="flex flex-wrap justify-start space-x-6 md:space-x-8 text-xs md:text-sm uppercase tracking-wide font-medium py-3">
+                <li class="relative group" id="category-dropdown-trigger">
+                    <div class="flex items-center cursor-pointer hover:text-accent transition">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg> Danh mục
+                    </div>
+                    <!-- Dropdown -->
+                    <div id="category-dropdown"
+                        class="absolute left-0 mt-3 w-64 bg-white text-gray-800 shadow-xl border border-gray-100 rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                        <ul id="category-list" class="py-2 max-h-[400px] overflow-y-auto">
+                            <!-- JS Injected -->
+                            <li class="px-6 py-3 text-sm text-gray-400 italic">Đang tải...</li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a href="index.html" class="hover:text-accent transition block">Trang chủ</a></li>
+                <li><a href="rituals.html" class="hover:text-accent transition block">Nghi lễ văn khấn</a></li>
+                <li><a href="about.html" class="hover:text-accent transition block">Về chúng tôi</a></li>
+                <li><a href="products.html" class="hover:text-accent transition block">Sản phẩm</a></li>
+                <li><a href="contact.html" class="hover:text-accent transition block">Liên hệ</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Breadcrumbs -->
+    <div class="container mx-auto px-4 py-4">
+        <nav class="flex text-[10px] md:text-xs text-gray-400 uppercase tracking-widest">
+            <a href="index.html" class="hover:text-primary transition">Trang chủ</a>
+            <span class="mx-2">/</span>
+            <a href="orders.html" class="hover:text-primary transition">Đơn hàng của tôi</a>
+            <span class="mx-2">/</span>
+            <span class="text-primary font-bold">Chi tiết đơn hàng</span>
+        </nav>
+    </div>
+    <!-- Main -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+        <div id="loading" class="text-center py-24 text-gray-500">Đang tải...</div>
+        <div id="order-container" class="hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-3">
+                <h1 class="text-3xl font-bold text-primary">Chi Tiết Đơn Hàng</h1>
+                <div class="flex items-center gap-3">
+                    <span id="o-status" class="px-4 py-1.5 rounded-full font-bold"></span>
+                    <button id="btn-cancel-order" onclick="openCancelModal()" class="hidden px-4 py-1.5 bg-red-100 text-red-700 rounded-full font-bold text-sm hover:bg-red-200 transition">Hủy đơn</button>
+                </div>
+            </div>
+            <!-- Back button -->
+            <a href="orders.html"
+                class="flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Quay lại đơn hàng
+            </a>
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- LEFT: Order items + totals -->
+                <div class="flex-1 min-w-0">
+                    <div class="bg-white border-2 border-gray-300 rounded-sm mb-4">
+                        <div class="flex justify-between items-center px-5 pt-4 pb-4 border-b border-gray-300">
+                            <span class="font-bold tracking-wide" id="o-code">#...</span>
+                            <span class="text-xs text-gray-500" id="o-date"></span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead
+                                    class="bg-bgtheme text-xs text-gray-500 uppercase tracking-widest border-b border-gray-300">
+                                    <tr>
+                                        <th class="p-3">Sản phẩm</th>
+                                        <th class="p-3">Giá tiền</th>
+                                        <th class="p-3 text-center">Số lượng</th>
+                                        <th class="p-3 text-right">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="o-items" class="divide-y divide-gray-300 text-sm"></tbody>
+                                <tfoot class="bg-white border-t border-gray-300">
+                                    <tr>
+                                        <td colspan="3" class="p-2 text-right">Tạm tính</td>
+                                        <td class="p-2 text-right" id="o-subtotal"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="p-2 text-right">Phí vận chuyển</td>
+                                        <td class="p-2 text-right" id="o-shipping"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="p-3 text-right text-primary font-bold text-base">Tổng
+                                            cộng</td>
+                                        <td class="p-3 text-right font-bold text-primary text-base" id="o-total"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Cancelled reason -->
+                    <div id="o-cancel-block"
+                        class="hidden bg-red-50 border border-red-200 rounded-sm p-4 text-sm text-red-700 mb-4">
+                        <span class="font-bold">Lý do hủy:</span> <span id="o-cancel-reason"></span>
+                    </div>
+
+                    <!-- Payment info -->
+                    <div class="bg-white border-2 border-gray-300 rounded-sm p-6">
+                        <h3 class="font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+                            Thanh toán
+                        </h3>
+                        <div class="text-sm space-y-2 text-gray-700">
+                            <div class="flex justify-between">
+                                <span class="text-gray-700 text-sm tracking-wider">Phương
+                                    thức</span>
+                                <span id="p-method" class="font-medium"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-700 text-sm tracking-wider">Trạng
+                                    thái</span>
+                                <span id="p-status" class="font-bold"></span>
+                            </div>
+
+                            <!-- QR Code Block -->
+                            <div id="p-qr-block" class="hidden mt-4 pt-4 border-t border-gray-200 text-center animate-in fade-in duration-300">
+                                <p class="text-xs font-bold text-primary mb-3">QUÉT MÃ QR ĐỂ THANH TOÁN</p>
+                                <div class="bg-white p-2 border border-gray-100 rounded inline-block shadow-sm">
+                                    <img id="p-qr-img" src="" alt="VietQR" class="w-48 h-48 object-contain mx-auto">
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-2 leading-relaxed">
+                                    Hệ thống sẽ cập nhật trạng thái ngay khi nhận được tiền.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="bg-white border-2 border-gray-300 rounded-sm p-6 mt-4">
+                        <h3 class=" font-bold uppercase tracking-widest mb-2">Ghi chú</h3>
+                        <p id="s-note" class="text-sm text-gray-600 italic"></p>
+                    </div>
+                </div>
+                <!-- RIGHT: Customer + Shipping -->
+                <div class="w-full lg:w-72 flex-shrink-0 space-y-4">
+                    <!-- Customer Info -->
+                    <div class="bg-white border-2 border-gray-300 rounded-sm p-6">
+                        <h3 class="text-sm font-bold uppercase tracking-widest flex text-center text-primary mb-5">
+                            Thông tin khách hàng
+                        </h3>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-0.5">Họ và tên</p>
+                        <p id="s-name" class="text-sm text-gray-800 mb-3"></p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-0.5">Liên hệ</p>
+                        <p id="s-phone" class="text-sm text-gray-700"></p>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div class="bg-white border-2 border-gray-300 rounded-sm p-6">
+                        <h3 class="text-sm font-bold uppercase tracking-widest flex text-center text-primary mb-5">
+                            Địa chỉ giao hàng
+                        </h3>
+                        <p id="s-address" class="text-sm text-gray-700 mb-3 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Cancel Order -->
+    <div id="cancel-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
+            <button type="button" onclick="closeCancelModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-lg font-bold text-primary mb-4">Hủy Đơn Hàng</h3>
+            <p class="text-sm text-gray-600 mb-4">Vui lòng cho biết lý do bạn muốn hủy đơn hàng này:</p>
+            <textarea id="cancel-reason" rows="3" class="w-full border border-gray-300 rounded focus:outline-none focus:border-primary p-2 mb-4 text-sm" placeholder="Ví dụ: Đổi ý không mua nữa, Muốn thay đổi sản phẩm..."></textarea>
+            <div id="cancel-error" class="hidden text-red-600 text-sm mb-4"></div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeCancelModal()" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 text-sm font-medium">Đóng</button>
+                <button type="button" onclick="submitCancelOrder()" id="btn-submit-cancel" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition">Xác nhận hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-bgtheme border-t border-gray-200 mt-auto">
+        <div class="container mx-auto px-10 py-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 items-start">
+                <div>
+                    <a href="index.html" class="flex flex-col items-center group">
+                        <img src="img/logoTN.png" class="w-20 h-20 md:w-28 md:h-28 object-contain">
+                    </a>
+                    <p class="text-sm text-gray-600 leading-relaxed text-center">Sự tận tâm tạo nên giá trị tâm linh. Tự
+                        hào mang đến những sản phẩm thờ cúng và nghi lễ chất lượng nhất cho gia đình Việt.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold tracking-widest uppercase text-sm my-8">Hỗ Trợ Hướng Dẫn</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-primary transition">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Tư vấn</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Hướng dẫn đổi trả</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold tracking-widest uppercase text-sm my-8">Cửa Hàng</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><a href="index.html" class="hover:text-primary transition">Trang chủ</a></li>
+                        <li><a href="rituals.html" class="hover:text-primary transition">Nghi lễ văn khấn</a></li>
+                        <li><a href="about.html" class="hover:text-primary transition">Về chúng tôi</a></li>
+                                                <li><a href="products.html" class="hover:text-primary transition">Sản phẩm</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold tracking-widest uppercase text-sm my-8">Liên Hệ</h4>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li>Địa chỉ: Xóm 6, xã Phú Lạc, tỉnh Thái Nguyên</li>
+                        <li>SĐT: 0376848044</li>
+                        <li>Email: Hoangphuvan2k@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-500 pt-4 mt-4 border-t border-gray-300 font-medium">
+                &copy; 2026 Tâm Linh Tuyết Nhân. Bảo lưu mọi quyền.
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            Auth.requireLogin();
+            setupAuthMenu();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (!code) { window.location.href = 'orders.html'; return; }
+
+            try {
+                const res = await ApiClient.get(`/orders/${code}`);
+                renderOrder(res.data);
+                updateCartCount();
+            } catch (err) {
+                document.getElementById('loading').innerText = 'Lỗi hoặc không tìm thấy đơn hàng.';
+            }
+
+            // Load Categories for Navigation
+            try {
+                const catRes = await ApiClient.get('/categories');
+                const catList = document.getElementById('category-list');
+                catList.innerHTML = '';
+                catRes.data.forEach(cat => {
+                    catList.innerHTML += `
+                        <li>
+                            <a href="products.html?category=${cat.slug}" class="flex items-center px-6 py-3 text-sm text-gray-700 hover:bg-bgtheme hover:text-primary transition group/item">
+                                <span class="flex-grow">${cat.name}</span>
+                                <svg class="w-4 h-4 text-gray-300 opacity-0 group-hover/item:opacity-100 group-hover/item:text-accent transition transform -translate-x-2 group-hover/item:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </li>
+                    `;
+                });
+            } catch (e) {
+                console.error("Error loading categories:", e);
+                if (document.getElementById('category-list')) {
+                    document.getElementById('category-list').innerHTML = '<li class="px-6 py-3 text-sm text-red-500">Không thể tải danh mục.</li>';
+                }
+            }
+        });
+
+        function renderOrder(order) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('order-container').classList.remove('hidden');
+
+            // Header info
+            document.getElementById('o-code').innerText = '#' + order.order_code;
+            document.getElementById('o-date').innerText = new Date(order.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            // Status badge
+            const statusMap = {
+                pending: { label: 'Chờ xử lý', cls: 'bg-yellow-100 text-yellow-800' },
+                confirmed: { label: 'Xác nhận', cls: 'bg-blue-100 text-blue-800' },
+                shipping: { label: 'Đang giao', cls: 'bg-purple-100 text-purple-800' },
+                delivered: { label: 'Hoàn thành', cls: 'bg-green-100 text-green-800' },
+                cancelled: { label: 'Hủy đơn', cls: 'bg-red-100 text-red-800' },
+            };
+            const s = statusMap[order.status] || { label: order.status, cls: 'bg-gray-100 text-gray-700' };
+            const statusEl = document.getElementById('o-status');
+            statusEl.innerText = s.label;
+            statusEl.className = `px-4 py-1.5 rounded-full text-sm font-bold ${s.cls}`;
+
+            const cancelBtn = document.getElementById('btn-cancel-order');
+            if (order.status === 'pending') {
+                cancelBtn.classList.remove('hidden');
+                cancelBtn.dataset.code = order.order_code;
+            } else {
+                cancelBtn.classList.add('hidden');
+            }
+
+            // Cancel reason
+            if (order.cancelled_reason) {
+                document.getElementById('o-cancel-reason').innerText = order.cancelled_reason;
+                document.getElementById('o-cancel-block').classList.remove('hidden');
+            }
+
+            // Customer info
+            document.getElementById('s-name').innerText = order.fullname;
+            document.getElementById('s-phone').innerText = order.phone;
+            document.getElementById('s-address').innerText = order.ship_address;
+            document.getElementById('s-note').innerText = order.note || 'Không có ghi chú.';
+
+            // Payment
+            const payMethodMap = { cod: 'Thanh toán khi nhận hàng (COD)', bank_transfer: 'Chuyển khoản (VietQR)' };
+            document.getElementById('p-method').innerText = payMethodMap[order.payment_method] || order.payment_method;
+
+            const pStatus = document.getElementById('p-status');
+            const payment = order.payment;
+            if (payment) {
+                if (payment.status === 'pending') {
+                    pStatus.innerText = 'Chờ thanh toán';
+                    pStatus.className = 'font-bold text-yellow-600';
+                    if (order.payment_method === 'bank_transfer' && payment.qr_url && order.status !== 'cancelled') {
+                        document.getElementById('p-qr-block').classList.remove('hidden');
+                        document.getElementById('p-qr-img').src = payment.qr_url;
+                    }
+                } else if (payment.status === 'paid') {
+                    pStatus.innerText = 'Đã thanh toán ✓';
+                    pStatus.className = 'font-bold text-green-600';
+                } else {
+                    pStatus.innerText = 'Thất bại / Hủy';
+                    pStatus.className = 'font-bold text-red-500';
+                }
+            } else {
+                pStatus.innerText = '—';
+            }
+
+            // Items
+            const itemsTbody = document.getElementById('o-items');
+            itemsTbody.innerHTML = '';
+            order.items.forEach(item => {
+                itemsTbody.innerHTML += `
+                    <tr>
+                        <td class="p-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${item.product_image || 'https://via.placeholder.com/50'}" class="w-12 h-12 object-cover rounded border border-gray-100 flex-shrink-0">
+                                <span>${item.product_name}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 ">${Number(item.unit_price).toLocaleString('vi-VN')} đ</td>
+                        <td class="p-3 text-center">${item.quantity}</td>
+                        <td class="p-3 text-right">${Number(item.subtotal).toLocaleString('vi-VN')} đ</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('o-subtotal').innerText = `${Number(order.subtotal).toLocaleString('vi-VN')} đ`;
+            document.getElementById('o-shipping').innerText = `${Number(order.shipping_fee).toLocaleString('vi-VN')} đ`;
+            document.getElementById('o-total').innerText = `${Number(order.total_amount).toLocaleString('vi-VN')} đ`;
+        }
+
+        function setupAuthMenu() {
+            const authMenu = document.getElementById('auth-menu');
+            if (!authMenu) return;
+            if (Auth.isLoggedIn()) {
+                authMenu.innerHTML = `
+                    <a href="profile.html" class="hover:text-accent mr-4 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        Tài khoản
+                    </a>
+                    <button onclick="Auth.logout()" class="hover:text-accent flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Đăng xuất
+                    </button>
+                `;
+            } else {
+                authMenu.innerHTML = `
+                    <a href="login.html" class="hover:text-accent mr-4">Đăng nhập</a>
+                    <span class="text-gray-300 mr-4">|</span>
+                    <a href="register.html" class="hover:text-accent">Đăng ký</a>
+                `;
+            }
+        }
+
+        async function updateCartCount() {
+            if (Auth.isLoggedIn()) {
+                try {
+                    const res = await ApiClient.get('/cart');
+                    document.getElementById('cart-count').innerText = res.data.total_items || 0;
+                } catch (e) { }
+            }
+        }
+
+        function openCancelModal() {
+            document.getElementById('cancel-reason').value = '';
+            document.getElementById('cancel-error').classList.add('hidden');
+            document.getElementById('cancel-modal').classList.remove('hidden');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancel-modal').classList.add('hidden');
+        }
+
+        async function submitCancelOrder() {
+            const btn = document.getElementById('btn-submit-cancel');
+            const reason = document.getElementById('cancel-reason').value.trim();
+            const errEl = document.getElementById('cancel-error');
+            const code = document.getElementById('btn-cancel-order').dataset.code;
+
+            if (!reason) {
+                errEl.innerText = 'Vui lòng nhập lý do hủy đơn.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Đang xử lý...';
+            errEl.classList.add('hidden');
+
+            try {
+                const res = await ApiClient.patch(`/orders/${code}/cancel`, { cancelled_reason: reason });
+                if (typeof showNotification === 'function') {
+                    showNotification(res.message || 'Đã hủy đơn hàng thành công.', 'success');
+                } else {
+                    alert(res.message || 'Đã hủy đơn hàng thành công.');
+                }
+                closeCancelModal();
+                // Reload the page after a short delay to let user see the notification
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } catch (err) {
+                errEl.innerText = err.message || 'Có lỗi xảy ra khi hủy đơn.';
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Xác nhận hủy';
+            }
+        }
+    </script>
+</body>
+
+</html>
