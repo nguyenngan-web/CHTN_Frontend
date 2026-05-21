@@ -10,7 +10,8 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <script>
-        tailwind.config = { theme: {
+        tailwind.config = {
+            theme: {
                 container: {
                     center: true,
                     screens: {
@@ -21,7 +22,9 @@
                         '2xl': '1240px',
                     },
                 },
-                extend: { colors: { primary: '#6F2A2A', accent: '#c49a45', bgtheme: '#FFF3D9', } } } }
+                extend: { colors: { primary: '#6F2A2A', accent: '#c49a45', bgtheme: '#FFF3D9', } }
+            }
+        }
     </script>
     <style>
         body {
@@ -31,7 +34,7 @@
     </style>
 </head>
 
-<body class="bg-gray-50 flex flex-col min-h-screen">
+<body class=" flex flex-col min-h-screen">
     <!-- Header: Logo, Search, User/Cart -->
     <header class="bg-bgtheme">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
@@ -88,7 +91,7 @@
                         </svg> Danh mục
                     </div>
                     <!-- Dropdown -->
-                    <div id="category-dropdown" 
+                    <div id="category-dropdown"
                         class="absolute left-0 mt-3 w-64 bg-white text-gray-800 shadow-xl border border-gray-100 rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
                         <ul id="category-list" class="py-2 max-h-[400px] overflow-y-auto">
                             <!-- JS Injected -->
@@ -105,12 +108,15 @@
         </div>
     </nav>
     <!-- Register -->
+    <div class="container mx-auto px-4 py-2 text-[10px] md:text-xs text-gray-400 uppercase tracking-widest mt-2">
+        Đăng ký
+    </div>
     <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white p-14 rounded-xl shadow-lg border border-gray-100">
+        <div class="max-w-md w-full space-y-8 bg-white p-14 rounded-xl shadow-lg border border-primary">
             <div>
-                <h2 class="mt-2 text-center text-3xl font-extrabold text-primary">Đăng Ký Tài Khoản</h2>
+                <h2 class="mt-2 text-center text-3xl font-bold text-primary">Đăng Ký Tài Khoản</h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    Đã có tài khoản? <a href="login.html" class="font-medium text-accent hover:text-[#b8952b]">Đăng
+                    Đã có tài khoản? <a href="login.html" class="font-medium text-accent">Đăng
                         nhập</a>
                 </p>
             </div>
