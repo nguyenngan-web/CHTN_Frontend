@@ -1,4 +1,4 @@
-const API_BASE = 'https://hmtnbackend-production.up.railway.app/api';
+const API_BASE = 'https://chtnbackend-production.up.railway.app/api';
 class ApiClient {
     static getToken() {
         return localStorage.getItem('auth_token');
