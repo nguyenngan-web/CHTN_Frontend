@@ -1,4 +1,4 @@
-const API_BASE = 'https://hangmatuyetnhanbackend-production.up.railway.app/api';
+const API_BASE = 'https://hmtnbackend-production.up.railway.app/api';
 class ApiClient {
     static getToken() {
         return localStorage.getItem('auth_token');
@@ -161,7 +161,7 @@ window.showConfirm = function (title, message) {
             modal.classList.add('scale-90');
             container.classList.remove('opacity-100');
             container.classList.add('opacity-0', 'pointer-events-none');
-            
+
             setTimeout(() => {
                 resolve(result);
             }, 300);
@@ -212,7 +212,7 @@ window.showPrompt = function (title, message, placeholder = '') {
             modal.classList.add('scale-90');
             container.classList.remove('opacity-100');
             container.classList.add('opacity-0', 'pointer-events-none');
-            
+
             setTimeout(() => {
                 resolve(value);
             }, 300);
